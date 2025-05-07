@@ -1,0 +1,33 @@
+//@version=5
+indicator("PS01 Hello(enhanced)",overlay = true)
+
+//inputs ------------
+len = input.int(21,"SMA Length",minval=1)
+plotColor = input.color(color.orange, "SMA color")  //mau tuy chon
+showLabel = input.bool(true,"Show Price Label?")  //cong tac on-off
+
+//SERIES ---
+sma = ta.sma(close,len)
+
+//PLOT
+plot(sma,color = plotColor,title ="SMA")
+
+// ── LABEL (chỉ một label/giá) ─────────────────────────
+var label priceLbl = na      // giữ handle giữa các bar
+
+if showLabel
+    // xoá nhãn cũ (nếu có) rồi tạo nhãn mới
+    if not na(priceLbl)
+        label.delete(priceLbl)
+    priceLbl := label.new(bar_index,
+                          close,
+                          text = str.tostring(close, format.mintick),
+                          style = label.style_label_down,
+                          color = color.new(plotColor, 20),
+                          textcolor = color.black,
+                          yloc = yloc.belowbar)
+else
+    // nếu tắt switch → xoá và reset handle
+    if not na(priceLbl)
+        label.delete(priceLbl)
+    priceLbl := na
