@@ -1,0 +1,23 @@
+//@version=5
+indicator("PS02 EMA color",overlay = true)
+
+//INPUTS
+emaLen = input.int(34,"EMA Length",minval = 1)
+slopePosCol = input.color(color.green,"Up-Slope Color")
+slopeNegCol = input.color(color.red,"Down-Slope Color")
+showRSIFilt = input.bool(true,"Filter by RSI?")
+rsiLen      = input.int(14,"RSI Length")
+rsiThresh   = input.int(55,"RSI Up-Filter(<45 for short)")
+
+//SERIES
+ema = ta.ema(close,emaLen)
+slopeUp = ema > ema[1]
+
+//RSI FILTER (series)
+rsi = ta.rsi(close,rsiLen)
+inFilter = showRSIFilt ? rsi > rsiThresh : true
+
+//PLOT
+plot(ema,color = slopeUp and inFilter ? slopePosCol : not slopeUp and inFilter ? slopeNegCol : color.gray,title = "EMA",linewidth = 3)
+
+//OPTIONAL LABEL LAST CLOSE (reuse Day 1 concept)
